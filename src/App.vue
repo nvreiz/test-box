@@ -1,10 +1,12 @@
 <template>
 
-  <div class="trigger-wrapper" id="triggerWrapper">
-    <div class="trigger-area" id="triggerArea"></div> <!-- 视觉上的 Tab Bar -->
+  <div class="trigger-wrapper" id="triggerWrapper" @mouseenter="showTabBar" @mouseleave="hideTabBar">
+    <div class="trigger-area" id="triggerArea" @mouseenter="showMenu" :style="{ opacity: tabBarVisible ? '1' : '0' }">
+    </div>
   </div>
 
-  <el-menu class="top-menu" id="topMenu" default-active="1" mode="horizontal">
+  <el-menu class="top-menu" id="topMenu" default-active="1" mode="horizontal"
+    :style="{ top: menuVisible ? '0' : '-70px' }" @mouseleave="hideMenuAndTabBar">
     <el-menu-item index="1">
       <RouterLink to="/">Home</RouterLink>
     </el-menu-item>
@@ -19,63 +21,36 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { ref } from 'vue';
 import { RouterLink, RouterView } from 'vue-router'
+const tabBarVisible = ref(false);
+const menuVisible = ref(false);
 
-onMounted(() => {
-  const topMenu = document.getElementById('topMenu');
-  const triggerWrapper = document.querySelector('.trigger-wrapper');
-  const triggerArea = document.getElementById('triggerArea');
-  if (topMenu == null || triggerArea == null || triggerWrapper == null) {
-    return
-  }
+// 显示Tab Bar的函数
+function showTabBar() {
+  tabBarVisible.value = true;
+}
 
-  // 显示Tab Bar的函数
-  function showTabBar() {
-    triggerArea!.style.opacity = '1';
-  }
+// 隐藏Tab Bar的函数
+function hideTabBar() {
+  tabBarVisible.value = false;
+}
 
-  // 隐藏Tab Bar的函数
-  function hideTabBar() {
-    triggerArea!.style.opacity = '0';
-  }
+// 显示菜单栏的函数
+function showMenu() {
+  menuVisible.value = true;
+}
 
-  // 显示菜单栏的函数
-  function showMenu() {
-    topMenu!.style.top = '0';
-  }
+// 隐藏菜单栏的函数
+function hideMenu() {
+  menuVisible.value = false;
+}
 
-  // 隐藏菜单栏的函数
-  function hideMenu() {
-    topMenu!.style.top = '-70px';
-  }
-
-  // 鼠标进入触发区域时显示Tab Bar
-  triggerWrapper.addEventListener('mouseenter', () => {
-    showTabBar();
-  });
-
-  // 鼠标进入触发区域时显示Tab Bar
-  triggerWrapper.addEventListener('mouseleave', () => {
-    hideTabBar();
-  });
-
-  // 鼠标进入Tab Bar时显示菜单栏
-  triggerArea.addEventListener('mouseenter', () => {
-    showMenu();
-  });
-
-  // // 鼠标离开Tab Bar时不做操作，继续保持显示
-  // triggerArea.addEventListener('mouseleave', () => {
-  //   // 保持Tab Bar显示直到进入或离开菜单栏后判断
-  // });
-
-  // 鼠标离开菜单栏时隐藏菜单栏和Tab Bar
-  topMenu.addEventListener('mouseleave', () => {
-    hideMenu();
-    hideTabBar();
-  });
-})
+// 隐藏菜单栏和Tab Bar
+const hideMenuAndTabBar = () => {
+  hideMenu();
+  hideTabBar();
+};
 </script>
 
 <style scoped>
@@ -106,14 +81,14 @@ onMounted(() => {
   z-index: 999;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   /* 轻微阴影效果，类似苹果风格 */
-  opacity: 60;
+  /* opacity: 60; */
   /* 默认隐藏Tab Bar */
   transition: opacity 0.3s ease-in-out;
 }
 
 .top-menu {
   position: fixed;
-  top: -60px;
+  top: -70px;
   /* 初始隐藏在页面上部 */
   left: 0;
   right: 0;
