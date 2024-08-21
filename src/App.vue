@@ -1,81 +1,123 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
-  <header>
-    <nav>
+
+  <div class="trigger-wrapper" id="triggerWrapper">
+    <div class="trigger-area" id="triggerArea"></div> <!-- 视觉上的 Tab Bar -->
+  </div>
+
+  <el-menu class="top-menu" id="topMenu" default-active="1" mode="horizontal">
+    <el-menu-item index="1">
       <RouterLink to="/">Home</RouterLink>
+    </el-menu-item>
+    <el-menu-item index="2">
       <RouterLink to="/testapp">TestApp</RouterLink>
+    </el-menu-item>
+    <el-menu-item index="3">
       <RouterLink to="/testapp2">TestApp2</RouterLink>
-
-    </nav>
-  </header>
-
+    </el-menu-item>
+  </el-menu>
   <RouterView />
 </template>
 
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { RouterLink, RouterView } from 'vue-router'
+
+onMounted(() => {
+  const topMenu = document.getElementById('topMenu');
+  const triggerWrapper = document.querySelector('.trigger-wrapper');
+  const triggerArea = document.getElementById('triggerArea');
+  if (topMenu == null || triggerArea == null || triggerWrapper == null) {
+    return
+  }
+
+  // 显示Tab Bar的函数
+  function showTabBar() {
+    triggerArea!.style.opacity = '1';
+  }
+
+  // 隐藏Tab Bar的函数
+  function hideTabBar() {
+    triggerArea!.style.opacity = '0';
+  }
+
+  // 显示菜单栏的函数
+  function showMenu() {
+    topMenu!.style.top = '0';
+  }
+
+  // 隐藏菜单栏的函数
+  function hideMenu() {
+    topMenu!.style.top = '-70px';
+  }
+
+  // 鼠标进入触发区域时显示Tab Bar
+  triggerWrapper.addEventListener('mouseenter', () => {
+    showTabBar();
+  });
+
+  // 鼠标进入触发区域时显示Tab Bar
+  triggerWrapper.addEventListener('mouseleave', () => {
+    hideTabBar();
+  });
+
+  // 鼠标进入Tab Bar时显示菜单栏
+  triggerArea.addEventListener('mouseenter', () => {
+    showMenu();
+  });
+
+  // // 鼠标离开Tab Bar时不做操作，继续保持显示
+  // triggerArea.addEventListener('mouseleave', () => {
+  //   // 保持Tab Bar显示直到进入或离开菜单栏后判断
+  // });
+
+  // 鼠标离开菜单栏时隐藏菜单栏和Tab Bar
+  topMenu.addEventListener('mouseleave', () => {
+    hideMenu();
+    hideTabBar();
+  });
+})
+</script>
+
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
+.trigger-wrapper {
+  position: fixed;
+  top: 0px;
+  /* left: 50%; */
+  /* transform: translateX(-50%); */
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  height: 30px;
+  z-index: 999;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+
+.trigger-area {
+  position: absolute;
+  top: 7px;
+  left: 150px;
+  transform: translateX(-50%);
+  width: 120px;
+  /* 更窄的触发区域宽度 */
+  height: 5px;
+  /* 更窄的触发区域高度 */
+  background-color: rgba(0, 0, 0, 0.9);
+  /* 黑色，类似苹果Tab Bar */
+  border-radius: 10px;
+  /* 圆角效果 */
+  z-index: 999;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  /* 轻微阴影效果，类似苹果风格 */
+  opacity: 60;
+  /* 默认隐藏Tab Bar */
+  transition: opacity 0.3s ease-in-out;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.top-menu {
+  position: fixed;
+  top: -60px;
+  /* 初始隐藏在页面上部 */
+  left: 0;
+  right: 0;
+  transition: top 0.3s ease-in-out;
+  z-index: 1000;
 }
 </style>
-./apps/test/components/HelloWorld.vue
